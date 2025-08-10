@@ -1,0 +1,121 @@
+-- Table: USER
+CREATE TABLE `User` (
+    `UserID` INT PRIMARY KEY,
+    `FirstName` VARCHAR(50),
+    `LastName` VARCHAR(50),
+    `DateOfBirth` DATE,
+    `FatherName` VARCHAR(50),
+    `MotherName` VARCHAR(50),
+    `GuardianPhoneNumber` VARCHAR(15),
+    `PresentAddress` TEXT,
+    `PermanentAddress` TEXT,
+    `Picture` MEDIUMBLOB,
+    `Birth Certificate` MEDIUMBLOB,
+    `Father's NID` MEDIUMBLOB,
+    `Mother's NID` MEDIUMBLOB,
+    `Password` VARCHAR(255),
+    `Role` ENUM('Admin', 'Moderator', 'Teacher', 'Accountant', 'Student') NOT NULL
+);
+
+
+-- Table: CLASS
+CREATE TABLE Class (
+    ClassID VARCHAR(20) PRIMARY KEY,
+    ClassName TEXT
+);
+
+-- Table: SUBJECT
+CREATE TABLE Subject (
+    SubjectID VARCHAR(50) PRIMARY KEY,
+    SubjectName VARCHAR(100)
+);
+
+CREATE TABLE Class_Subject (
+    ClassID VARCHAR(20),
+    SubjectID VARCHAR(50),
+    PRIMARY KEY (ClassID, SubjectID),
+    FOREIGN KEY (ClassID) REFERENCES Class(ClassID) ON DELETE SET NULL,
+    FOREIGN KEY (SubjectID) REFERENCES Subject(SubjectID) ON DELETE SET NULL
+);
+
+-- Table: STUDENT
+CREATE TABLE Student (
+    RollNumber INT PRIMARY KEY,
+    UserID INT,
+    ClassID VARCHAR(20),
+    TuitionFeeID INT,
+    AttendanceID INT,
+    FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE SET NULL,
+    FOREIGN KEY (ClassID) REFERENCES Class(ClassID) ON DELETE SET NULL
+);
+
+-- Table: EXAM
+CREATE TABLE Exam (
+    ExamID VARCHAR(50) PRIMARY KEY,
+    ClassID VARCHAR(20),
+    Term ENUM('First Term', 'Second Term', 'Annual Exam') NOT NULL,
+    ExamDate DATE,
+    Marks JSON,
+    FOREIGN KEY (ClassID) REFERENCES Class(ClassID) ON DELETE SET NULL
+);
+
+-- Table: RESULT
+CREATE TABLE Result (
+    ResultID VARCHAR(50) PRIMARY KEY,
+    RollNumber INT,
+    StudentID INT,
+    ClassID VARCHAR(20),
+    ExamID VARCHAR(50),
+    Marks JSON,
+    TotalMarks INT,
+    Grade CHAR(2),
+    GPA DECIMAL(3, 2),
+    FOREIGN KEY (RollNumber) REFERENCES Student(RollNumber) ON DELETE SET NULL,
+    FOREIGN KEY (ExamID) REFERENCES Exam(ExamID) ON DELETE SET NULL
+);
+
+-- Table: ATTENDANCE
+CREATE TABLE Attendance (
+    AttendanceID INT PRIMARY KEY,
+    ClassID VARCHAR(20),
+    RollNumber INT,
+    UserID INT,
+    Date DATE,
+    Status ENUM('Present', 'Absent') NOT NULL,
+    FOREIGN KEY (ClassID) REFERENCES Class(ClassID) ON DELETE SET NULL,
+    FOREIGN KEY (RollNumber) REFERENCES Student(RollNumber) ON DELETE SET NULL,
+    FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE SET NULL
+);
+
+-- Table: TUITION_FEE
+CREATE TABLE TuitionFee (
+    TuitionFeeID INT PRIMARY KEY,
+    UserID INT,
+    RollNumber INT,
+    ClassID VARCHAR(20),
+    Category ENUM('Tuition', 'Exam Fee', 'Registration Fee', 'Other Fees') NOT NULL,
+    Amount DECIMAL(10, 2),
+    PaymentStatus ENUM('Paid', 'Due') NOT NULL,
+    PaymentDate DATE,
+    FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE SET NULL,
+    FOREIGN KEY (RollNumber) REFERENCES Student(RollNumber) ON DELETE SET NULL,
+    FOREIGN KEY (ClassID) REFERENCES Class(ClassID) ON DELETE SET NULL
+);
+
+-- Table: EMPLOYEE
+CREATE TABLE Employee (
+    EmployeeID INT PRIMARY KEY,
+    UserID INT,
+    EmployeeType ENUM('Moderator', 'Teacher', 'Accountant') NOT NULL,
+    SalaryDetails JSON,
+    FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE SET NULL
+);
+
+-- Table: PaymentHistory (Relationship Table for Fees)
+CREATE TABLE PaymentHistory (
+    PaymentHistoryID INT PRIMARY KEY AUTO_INCREMENT,
+    TuitionFeeID INT,
+    PaymentDate DATE,
+    AmountPaid DECIMAL(10, 2),
+    FOREIGN KEY (TuitionFeeID) REFERENCES TuitionFee(TuitionFeeID) ON DELETE SET NULL
+);

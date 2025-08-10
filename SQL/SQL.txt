@@ -1,0 +1,111 @@
+-- Table: USER
+CREATE TABLE User (
+    UserID INT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    DateOfBirth DATE,
+    FatherName VARCHAR(50),
+    MotherName VARCHAR(50),
+    GuardianPhoneNumber VARCHAR(15),
+    PresentAddress TEXT,
+    PermanentAddress TEXT,
+    Documents TEXT, -- JSON or CSV format for storing BirthCertificate, NID, etc.
+    Password VARCHAR(255),
+    Role ENUM('Admin', 'Moderator', 'Teacher', 'Accountant', 'Student') NOT NULL
+);
+
+-- Table: CLASS
+CREATE TABLE Class (
+    ClassID INT PRIMARY KEY,
+    SubjectID INT
+);
+
+-- Table: SUBJECT
+CREATE TABLE Subject (
+    SubjectID INT PRIMARY KEY,
+    ClassID INT,
+    SubjectName VARCHAR(100),
+    FOREIGN KEY (ClassID) REFERENCES Class(ClassID)
+);
+
+-- Table: STUDENT
+CREATE TABLE Student (
+    RollNumber INT PRIMARY KEY,
+    UserID INT,
+    ClassID INT,
+    TuitionFeeID INT,
+    AttendanceID INT,
+    FOREIGN KEY (UserID) REFERENCES User(UserID),
+    FOREIGN KEY (ClassID) REFERENCES Class(ClassID)
+);
+
+-- Table: EXAM
+CREATE TABLE Exam (
+    ExamID INT PRIMARY KEY,
+    ClassID INT,
+    Term ENUM('First Term', 'Second Term', 'Annual Exam') NOT NULL,
+    ExamDate DATE,
+    Marks JSON, -- Assuming marks are stored as JSON (e.g., {"Subject1": 85, "Subject2": 90})
+    FOREIGN KEY (ClassID) REFERENCES Class(ClassID)
+);
+
+-- Table: RESULT
+CREATE TABLE Result (
+    ResultID INT PRIMARY KEY,
+    RollNumber INT,
+    StudentID INT,
+    ClassID INT,
+    ExamID INT,
+    Marks JSON, -- WrittenMarks, MCQMarks, PracticalMarks stored in JSON
+    TotalMarks INT,
+    Grade CHAR(2),
+    GPA DECIMAL(3, 2),
+    FOREIGN KEY (RollNumber) REFERENCES Student(RollNumber),
+    FOREIGN KEY (ExamID) REFERENCES Exam(ExamID)
+);
+
+-- Table: ATTENDANCE
+CREATE TABLE Attendance (
+    AttendanceID INT PRIMARY KEY,
+    ClassID INT,
+    RollNumber INT,
+    UserID INT,
+    Date DATE,
+    Status ENUM('Present', 'Absent') NOT NULL,
+    FOREIGN KEY (ClassID) REFERENCES Class(ClassID),
+    FOREIGN KEY (RollNumber) REFERENCES Student(RollNumber),
+    FOREIGN KEY (UserID) REFERENCES User(UserID)
+);
+
+-- Table: TUITION_FEE
+CREATE TABLE TuitionFee (
+    TuitionFeeID INT PRIMARY KEY,
+    UserID INT,
+    RollNumber INT,
+    ClassID INT,
+    Category ENUM('Tuition', 'Exam Fee', 'Registration Fee', 'Other Fees') NOT NULL,
+    Amount DECIMAL(10, 2),
+    PaymentStatus ENUM('Paid', 'Due') NOT NULL,
+    PaymentDate DATE,
+    FOREIGN KEY (UserID) REFERENCES User(UserID),
+    FOREIGN KEY (RollNumber) REFERENCES Student(RollNumber),
+    FOREIGN KEY (ClassID) REFERENCES Class(ClassID)
+);
+
+-- Table: EMPLOYEE
+CREATE TABLE Employee (
+    EmployeeID INT PRIMARY KEY,
+    UserID INT,
+    EmployeeType ENUM('Moderator', 'Teacher', 'Accountant') NOT NULL,
+    SalaryDetails JSON, -- BaseSalary, Allowances, Deductions stored in JSON
+    FOREIGN KEY (UserID) REFERENCES User(UserID)
+);
+
+-- Table: PaymentHistory (Relationship Table for Fees)
+CREATE TABLE PaymentHistory (
+    PaymentHistoryID INT PRIMARY KEY AUTO_INCREMENT,
+    TuitionFeeID INT,
+    PaymentDate DATE,
+    AmountPaid DECIMAL(10, 2),
+    FOREIGN KEY (TuitionFeeID) REFERENCES TuitionFee(TuitionFeeID)
+);
