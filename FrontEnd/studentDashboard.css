@@ -29,7 +29,7 @@ body {
 .sidebar {
     display: flex;
     align-items: center;
-    background-color: rgba(172, 10, 10, 0.918);
+    background-color: rgba(198, 146, 146, 0.918);
     padding: 1rem;
     color: #fff;
     width: 100%;
