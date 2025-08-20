@@ -24,9 +24,9 @@ body {
 .sidebar {
     display: flex;
     align-items: center;
-    background-color: rgba(249, 249, 249, 0.918);
+    background-color: rgba(230, 69, 69, 0.918);
     padding: 1rem;
-    color: #fff;
+    color: #c03535;
     width: 100%;
 }
 

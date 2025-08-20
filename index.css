@@ -30,8 +30,8 @@ section {
 
 
 nav {
-    background: #b60707;
-    color: #fff;
+    background: #e15858;
+    color: #ffffff;
     padding: 5px 10px;
     position: fixed;
     width: 100%;
@@ -84,7 +84,7 @@ nav ul li a:hover {
 
 .carousel .carousel-container {
     position: relative;
-    width: 60%;
+    width: 20%;
     margin: auto;
     overflow: hidden;
 }
@@ -100,7 +100,7 @@ nav ul li a:hover {
     object-fit: cover;
     flex-shrink: 5;
     display: none;
-    background-color: #972121;
+    background-color: #d56565;
 }
 
 .carousel .card-image.active {
@@ -205,7 +205,7 @@ nav ul li a:hover {
 }
 .card {
     flex: 0 0 250px;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(63, 93, 202, 0.2);
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
